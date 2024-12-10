@@ -41,7 +41,7 @@ chmod +x TH3CRYPT0LI0N.py
 For easier access, you can move the tool to a directory in your $PATH:
 
 ```
-sudo mv th3crypt0l10n.py /usr/local/bin/TH3CRYPT0LI0N.py
+sudo mv TH3CRYPT0LI0N.py /usr/local/bin/TH3CRYPT0LI0N.py
 ```
 Now you can run the tool from anywhere:
 
