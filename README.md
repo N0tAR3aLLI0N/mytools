@@ -1,37 +1,54 @@
 Finally my First Decrypter and also hash,Cipher Identifier Tool .. 
-![image](https://github.com/user-attachments/assets/fbd4b257-65a0-45ed-bc25-44f72d2d8877)
+![image](https://github.com/user-attachments/assets/415ed775-4c70-4b2b-9cf0-e1e43e4f8aeb)
 
-Key Features
-Hash Type Detection: Identifies common hash types (MD5, SHA-1, SHA-256, SHA-512).
-Base Encoding Decoding: Decodes Base64, Base32, or Base85 encoded strings.
-Binary and Hexadecimal Decoding: Converts binary or hexadecimal-encoded text into plain text.
-Classical Cipher Decryption: Supports decryption of:
+# TH3CRYPT0LI0N
 
--Caesar Cipher
+**TH3CRYPT0LI0N** is a cryptography tool designed to detect and classify hash types, decode Base64, Hexadecimal, and Binary encodings, and decrypt classical ciphers including Caesar, Atbash, Vigenère, ROT13, Morse, Reverse, and Bacon. It’s built to help you easily analyze encoded and encrypted data.
 
--Atbash Cipher
+## Features
 
--Vigenère Cipher
+- Detect and classify hash types (MD5, SHA, etc.)
+- Decode Base64, Hexadecimal, and Binary encodings
+- Decrypt Classical Ciphers:
+  - Caesar Cipher
+  - Atbash Cipher
+  - Vigenère Cipher
+  - ROT13
+  - Morse Code
+  - Reverse Text
+  - Bacon’s Cipher
+- Easy-to-use command-line interface
 
-Hash Cracking Links: Provides links to online hash-cracking tools for further analysis.
-How to Use
+## Installation
 
-Download the Python file: th3crypt0li0n.py.
+### Option 1: Clone the Repository and Run
 
-Ensure you have Python installed on your system.
-Run the tool using the command:
+1. Clone the repository:
+   ```
+   git clone https://github.com/N0tAR3aLLI0N/mytools/TH3CRYPT0LI0N.git
+   cd TH3CRYPT0LI0N
+   ```
+2.Make the script executable:
+```
+chmod +x TH3CRYPT0LI0N.py
+```
+3. Run the tool :
+```
+./th3crypt0l10n.py
+```
+#Option 2: Move to a Directory in PATH
 
-python th3crypt0li0n.py
+For easier access, you can move the tool to a directory in your $PATH:
+
+```
+sudo mv th3crypt0l10n.py /usr/local/bin/th3crypt0l10n
+```
+Now you can run the tool from anywhere:
+
+```
+th3crypt0l10n
+```
 
 
-Follow the on-screen menu to analyze and decrypt text.
-Dependencies
-The tool uses the rich library for its styled console interface. Install it using:
 
-pip install rich
-
-
-Made By Me:
-
-N0tAR3aLLI0N
 
