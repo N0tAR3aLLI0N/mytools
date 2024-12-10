@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import base64
 from rich.console import Console
 from rich.panel import Panel
@@ -23,7 +24,6 @@ def detect_hash(text):
 def provide_hash_cracking_links(hash_value):
     """Provide links to online hash-cracking tools."""
     console.print("\n[bold yellow]You can try cracking this hash at the following online tools:[/bold yellow]")
-    
     urls = [
         f"https://crackstation.net/",
         f"https://hashes.com/en/decrypt/hash/{hash_value}",
@@ -31,46 +31,25 @@ def provide_hash_cracking_links(hash_value):
         f"https://www.nitrxgen.net/md5db/{hash_value}",
         f"https://www.md5online.org/md5-decrypt.html",
     ]
-    
     for i, url in enumerate(urls, 1):
         console.print(f"[green]{i}. {url}[/green]")
 
 # === Base Encoding Detection and Decoding ===
 
-def detect_base_encoding(text):
-    """Detect base encoding type."""
+def detect_base64(text):
+    """Detect Base64 encoding."""
     try:
         base64.b64decode(text, validate=True)
         return "Base64"
     except Exception:
-        pass
+        return None
 
+def decode_base64(text):
+    """Decode Base64 encoded text."""
     try:
-        base64.b32decode(text, validate=True)
-        return "Base32"
-    except Exception:
-        pass
-
-    try:
-        base64.b85decode(text)
-        return "Base85"
-    except Exception:
-        pass
-
-    return None
-
-def decode_base(text, encoding_type):
-    """Decode text based on detected base encoding."""
-    try:
-        if encoding_type == "Base64":
-            return base64.b64decode(text).decode("utf-8")
-        elif encoding_type == "Base32":
-            return base64.b32decode(text).decode("utf-8")
-        elif encoding_type == "Base85":
-            return base64.b85decode(text).decode("utf-8")
+        return base64.b64decode(text).decode("utf-8")
     except Exception as e:
-        return f"Error decoding: {e}"
-    return "Unsupported base encoding"
+        return f"Error decoding Base64: {e}"
 
 # === Classical Ciphers ===
 
@@ -85,19 +64,9 @@ def caesar_cipher_decrypt(text, shift):
             decrypted += char
     return decrypted
 
-def vigenere_decrypt(text, key):
-    """Decrypt Vigenère cipher with a key."""
-    decrypted = ""
-    key = [ord(char) - 65 for char in key.upper()]
-    key_index = 0
-    for char in text:
-        if char.isalpha():
-            shift_base = 65 if char.isupper() else 97
-            decrypted += chr((ord(char) - shift_base - key[key_index]) % 26 + shift_base)
-            key_index = (key_index + 1) % len(key)
-        else:
-            decrypted += char
-    return decrypted
+def rot13_decrypt(text):
+    """Decrypt ROT13 cipher."""
+    return caesar_cipher_decrypt(text, 13)
 
 def atbash_cipher_decrypt(text):
     """Decrypt Atbash cipher."""
@@ -111,6 +80,42 @@ def atbash_cipher_decrypt(text):
         else:
             decrypted += char
     return decrypted
+
+def reverse_cipher_decrypt(text):
+    """Decrypt Reverse Cipher."""
+    return text[::-1]
+
+def morse_code_decrypt(text):
+    """Decrypt Morse Code."""
+    MORSE_CODE_DICT = {
+        '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
+        '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
+        '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+        '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T',
+        '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', '-.--': 'Y',
+        '--..': 'Z', '.----': '1', '..---': '2', '...--': '3',
+        '....-': '4', '.....': '5', '-....': '6', '--...': '7',
+        '---..': '8', '----.': '9', '-----': '0', '/': ' '
+    }
+    try:
+        return ''.join(MORSE_CODE_DICT[char] for char in text.split())
+    except KeyError:
+        return "Error decoding Morse Code."
+
+def bacon_cipher_decrypt(text):
+    """Decrypt Bacon's Cipher."""
+    BACON_DICT = {
+        "aaaaa": "A", "aaaab": "B", "aaaba": "C", "aaabb": "D", "aabaa": "E",
+        "aabab": "F", "aabba": "G", "aabbb": "H", "abaaa": "I", "abaab": "J",
+        "ababa": "K", "ababb": "L", "abbaa": "M", "abbab": "N", "abbba": "O",
+        "abbbb": "P", "baaaa": "Q", "baaab": "R", "baaba": "S", "baabb": "T",
+        "babaa": "U", "babab": "V", "babba": "W", "babbb": "X", "bbaaa": "Y",
+        "bbaab": "Z"
+    }
+    try:
+        return ''.join(BACON_DICT[char] for char in text.split())
+    except KeyError:
+        return "Error decoding Bacon's Cipher."
 
 # === Binary and Hex Decryption ===
 
@@ -126,28 +131,34 @@ def binary_decrypt(text):
 def hex_decrypt(text):
     """Convert hexadecimal text to plain text."""
     try:
-        return bytes.fromhex(text).decode("utf-8")
+        return bytes.fromhex(text.replace(" ", "")).decode("utf-8")
     except Exception as e:
         return f"Error decoding hex: {e}"
 
 # === Main Tool ===
-
+def detect_bacon_or_hex(text):
+    if all(c in "ABab " for c in text):
+        return "Bacon"
+    elif all(c in "0123456789abcdefABCDEF " for c in text):
+        return "Hexadecimal"
+    else:
+        return None
 def main():
     console.print(
         Panel.fit(
             "[bold magenta]TH3CRYPT0LI0N[/bold magenta]\n"
             "[bold cyan]Made by [yellow]N0tAR3aLLI0N[/yellow][/bold cyan]\n\n"
             "[bold green]Tool Features:[/bold green]\n"
-            "[bold white]- Detect and classify hash types[/bold white]\n"
-            "[bold white]- Decode Base64, Base32, and Base85 encoded strings[/bold white]\n"
-            "[bold white]- Crack binary and hexadecimal encodings[/bold white]\n"
-            "[bold white]- Decrypt Classical Ciphers (Caesar, Atbash, Vigenère)[/bold white]",
+            "- Detect and classify hash types\n"
+            "- Decode Base64, Hexadecimal, and Binary encodings\n"
+            "- Decrypt Classical Ciphers (Caesar, Atbash, Vigenère, ROT13, Morse, Reverse, Bacon)",
             title="[bold blue]Welcome to TH3CRYPT0LI0N[/bold blue]",
             border_style="bold magenta",
         )
     )
     console.print("[bold green]1.[/bold green] Detect a hash type")
     console.print("[bold green]2.[/bold green] Identify and decrypt a cipher")
+    
     choice = input("Choose an option (1/2): ")
 
     if choice == "1":
@@ -158,50 +169,61 @@ def main():
             provide_hash_cracking_links(hash_value)
         else:
             console.print("\n[bold red]Unable to detect the hash type. Make sure the hash is valid.[/bold red]")
-
     elif choice == "2":
         text = input("Enter the text to analyze: ").strip()
-
-        # Detect and decode base encoding
-        base_type = detect_base_encoding(text)
-        if base_type:
-            console.print(f"[green]Detected {base_type} encoding![/green]")
-            decoded = decode_base(text, base_type)
-            console.print(f"[bold green]Decoded text:[/bold green] {decoded}")
+        
+        # Base64 Detection
+        if detect_base64(text):
+            console.print("[green]Detected Base64 encoding![/green]")
+            console.print(f"[bold green]Decoded text:[/bold green] {decode_base64(text)}")
             return
 
-        # Attempt Binary and Hex decoding
+        # Binary Detection
         if all(c in "01 " for c in text):
             console.print("[yellow]Detected potential binary encoding.[/yellow]")
-            decoded_binary = binary_decrypt(text)
-            console.print(f"[bold green]Decoded binary text:[/bold green] {decoded_binary}")
+            console.print(f"[bold green]Decoded binary text:[/bold green] {binary_decrypt(text)}")
             return
 
-        if all(c in "0123456789abcdefABCDEF" for c in text.replace(" ", "")):
+        # Bacon vs Hexadecimal Detection
+        bacon_or_hex = detect_bacon_or_hex(text)
+        if bacon_or_hex == "Bacon":
+            console.print("[yellow]Detected Bacon's Cipher encoding.[/yellow]")
+            console.print(f"[bold green]Decrypted Bacon's Cipher text:[/bold green] {bacon_cipher_decrypt(text.lower())}")
+            return
+        elif bacon_or_hex == "Hexadecimal":
             console.print("[yellow]Detected potential hexadecimal encoding.[/yellow]")
-            decoded_hex = hex_decrypt(text)
-            console.print(f"[bold green]Decoded hex text:[/bold green] {decoded_hex}")
+            console.print(f"[bold green]Decoded hex text:[/bold green] {hex_decrypt(text)}")
             return
 
-        # Attempt Classical Ciphers
+        # Classical Cipher Detection
+        console.print("[yellow]Attempting Morse code decryption...[/yellow]")
+        morse_result = morse_code_decrypt(text)
+        if morse_result != "Error decoding Morse Code.":
+            console.print(f"[bold green]Decrypted with Morse Code:[/bold green] {morse_result}")
+            return
+        
         console.print("[yellow]Attempting Caesar cipher decryption...[/yellow]")
         for shift in range(26):
             possible = caesar_cipher_decrypt(text, shift)
             console.print(f"Shift {shift}: {possible}")
+        
+        console.print("[yellow]Attempting ROT13 decryption...[/yellow]")
+        console.print(f"[bold green]Decrypted with ROT13:[/bold green] {rot13_decrypt(text)}")
 
         console.print("[yellow]Attempting Atbash cipher decryption...[/yellow]")
-        decrypted_atbash = atbash_cipher_decrypt(text)
-        console.print(f"[bold green]Decrypted with Atbash:[/bold green] {decrypted_atbash}")
+        console.print(f"[bold green]Decrypted with Atbash:[/bold green] {atbash_cipher_decrypt(text)}")
 
-        console.print("[yellow]Attempting Vigenère cipher decryption...[/yellow]")
-        key = input("Enter Vigenère key: ").strip()
-        decrypted_vigenere = vigenere_decrypt(text, key)
-        console.print(f"[bold green]Decrypted with Vigenère:[/bold green] {decrypted_vigenere}")
+        console.print("[yellow]Attempting Reverse cipher decryption...[/yellow]")
+        console.print(f"[bold green]Decrypted with Reverse Cipher:[/bold green] {reverse_cipher_decrypt(text)}")
 
+        console.print("[yellow]Attempting Bacon's cipher decryption...[/yellow]")
+        bacon_result = bacon_cipher_decrypt(text)
+        if bacon_result != "Error decoding Bacon's Cipher.":
+            console.print(f"[bold green]Decrypted with Bacon Cipher:[/bold green] {bacon_result}")
+        else:
+            console.print("[red]Unable to identify or decode the cipher.[/red]")
     else:
-        console.print("[red]Invalid option selected. Please try again.[/red]")
-
-while(1):
-
+        console.print("[red]Invalid option. Please choose either 1 or 2.[/red]")
+while True:
     if __name__ == "__main__":
-         main()
+       main()
