@@ -25,8 +25,8 @@ Finally my First Decrypter and also hash,Cipher Identifier Tool ..
 
 1. Clone the repository:
    ```
-   git clone https://github.com/N0tAR3aLLI0N/mytools/TH3CRYPT0LI0N.git
-   cd TH3CRYPT0LI0N
+   git clone https://github.com/N0tAR3aLLI0N/mytools.git
+   cd mytools
    ```
 2.Make the script executable:
 ```
